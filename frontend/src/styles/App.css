@@ -1,0 +1,33 @@
+.app-container {
+  display: flex;
+  height: 100vh;
+  background-color: #ffffff;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.main-content p {
+  margin: 0;
+  font-size: 3rem;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Utility classes for logo if needed */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
