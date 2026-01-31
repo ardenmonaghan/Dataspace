@@ -1,14 +1,18 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@import "tailwindcss";
 
-html {
-  font-size: 62.5%;
-  /* 1rem = 10px */
-}
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-body {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  html {
+    font-size: 62.5%;
+    /* 1rem = 10px */
+  }
+
+  body {
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  }
 }

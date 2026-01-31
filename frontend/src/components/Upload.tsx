@@ -1,7 +1,7 @@
 import { type ChangeEvent, useState } from 'react'
 import axios from 'axios';
 
-type UploadCsvResponse = {
+type UploadCSVResponse = {
   id: string;
   saved_as: string;
   path: string;
@@ -34,7 +34,7 @@ function Upload() {
       formData.append("file", file); 
       // axios.post(url, data, config) formData is our request body.
       try {
-        await axios.post("https://httpbin.org/post",
+        const response = await axios.post("https://httpbin.org/post",
           formData, 
           {
           headers: {
@@ -42,7 +42,7 @@ function Upload() {
           },
         }); 
 
-        // console.log(response.data);
+        console.log(response.data);
         setStatus("success");
       
       } catch(e) {
@@ -52,13 +52,13 @@ function Upload() {
 
   return (
     <div>
-      <h1>Upload File</h1>
-      <input type="file" onChange={handleFileChange} />
+      <h1 className="text-2xl font-bold mb-4">Upload File</h1>
+      <input className="mb-4 w-full text-lg" type="file" onChange={handleFileChange} />
       {file && (
         <div className="mb-4 text-sm">
-          <p className="text-gray-500">File Name: {file.name}</p>
-          <p className="text-gray-500">File Type: {file.type}</p>
-          <p className="text-gray-500">File Size: {file.size}</p>
+          <p className="text-gray-500 text-lg">File Name: {file.name}</p>
+          <p className="text-gray-500 text-lg">File Type: {file.type}</p>
+          <p className="text-gray-500 text-lg">File Size: {file.size}</p>
         </div>
       )}
       {/* Dont want to render button if we are already uploading. */}
