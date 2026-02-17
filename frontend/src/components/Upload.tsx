@@ -1,12 +1,6 @@
 import { type ChangeEvent, useState } from 'react'
 import axios from 'axios';
 
-type UploadCSVResponse = {
-  id: string;
-  saved_as: string;
-  path: string;
-}
-
 type UploadStatus = "idle" | "uploading" | "success" | "error";
 
 function Upload() {
@@ -14,6 +8,8 @@ function Upload() {
     // Either going to be a file, or it will be null, no file. 
     const [file, setFile] = useState<File | null>(null);
     const [status, setStatus] = useState<UploadStatus>("idle")
+    const [pct, setUploadProgress] = useState(0);
+
 
     function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
       // Get the first file, when we select file.
@@ -34,7 +30,14 @@ function Upload() {
       formData.append("file", file); 
       // axios.post(url, data, config) formData is our request body.
       try {
-        const response = await axios.post("http://localhost:8000/db/upload_db", formData);
+        const response = await axios.post("http://localhost:8000/db/upload_db", formData, {
+          onUploadProgress: (e) => {
+            if (e.total) {
+              const pct = Math.round((e.loaded / e.total) * 100);
+              setUploadProgress(pct); // e.g. 0–100
+            }
+          },
+        });
 
         console.log(response.data);
         setStatus("success");

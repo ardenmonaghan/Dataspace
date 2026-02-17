@@ -21,9 +21,6 @@ def upload_db(file: UploadFile = File(...)) -> dict:
         dict - A response object (dictionary) containing the message "File uploaded successfully".
     '''
     # Return a JSON response to the frontend
-    print(JSON)
+    print(UploadFile)
 
-    return {
-        "message": "File uploaded successfully",
-        "filename": file.filename,
-        "content_type": file.content_type }
+    return { "message": "File uploaded successfully"}
