@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from db_helpers import db_storage
+from db_helpers import db_routes
 
 app = FastAPI()
 
@@ -12,7 +12,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(db_storage.router)
+app.include_router(db_routes.router)
 
 
 
