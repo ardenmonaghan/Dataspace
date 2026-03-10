@@ -2,6 +2,7 @@ import duckdb
 import os
 from db_helpers.db_services import get_dataset_by_id
 from openai import OpenAI
+import logging
 import dotenv
 
 # Currently use 
@@ -10,8 +11,9 @@ dotenv.load_dotenv()
 class InsightAgent:
     def __init__(self, dataset_id: str):
         self.dataset_id = dataset_id
+        self.dataset = None
 
-    def run_query(self, query: str):
+    def run_simple_query(self, query: str):
         client = OpenAI()
 
         response = client.chat.completions.create(
@@ -23,10 +25,39 @@ class InsightAgent:
         )
         return response.choices[0].message.content
 
+    def retrieve_metadata(self):
+        '''
+        Retrieve the metadata of the dataset from the database.
+        Args:
+            None
+        Returns:
+            Dataset - The dataset object with the metadata.
+        '''
+        # dataset object is returned from this call. 
+        dataset = get_dataset_by_id(self.dataset_id)
+
+        self.dataset = dataset
+        return dataset
+
+    def retrieve_sample_rows(self):
+        '''
+        '''
+        pass
+
+    def build_system_prompt(self):
+        '''
+        build_system_prompt is a function that builds the system prompt for the agent to retrieve the insight of the data
+        Args:
+            None
+        Returns:
+            str - The system prompt for the agent.
+        '''
+        pass
+
 
 if __name__ == "__main__":
     print(get_dataset_by_id("123"))
-    print(InsightAgent("123").run_query("Hello, how are you?"))
+    print(InsightAgent("123").run_simple_query("Hello, how are you?"))
 
 # python3 -m ai_helpers.insight_agent
 

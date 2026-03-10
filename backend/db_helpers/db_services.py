@@ -13,10 +13,6 @@ from sqlalchemy import (
 from db_helpers.db_constants import DATA_ROOT, METADATA_DB, METADATA_TABLE
 from fastapi import UploadFile
 
-
-
-# from constants import Dataset
-
 def detect_upload_type(filename: str):
     '''
     detect_upload_type is a function that detects the type of the file that is being uploaded.
@@ -168,85 +164,26 @@ def get_sqlite_schema(sqlite_path: Path) -> dict:
 
     return schema
 
-########################################################
-# Metadata Database Functions
-########################################################
 
-def connect_metadata_db():
-    # Connect to the metadata database
-    conn = sqlite3.connect(str(METADATA_DB))
+# def get_sample_rows(dataset: Dataset, num_rows: int, table_name: str) list[dict[str, Any]]:
+#     '''
+#     get_sample_rows is a db_helper function that gets the sample rows from a dataset and returns them as a list of dictionaries.
+#     If table name is none then we will return none.
 
-    conn.execute(f"""CREATE TABLE IF NOT EXISTS {METADATA_TABLE}
-    (dataset_id TEXT PRIMARY KEY, upload_type TEXT, raw_byte_size INTEGER, tables TEXT NOT NULL, schema TEXT NOT NULL)""")
+#     For CSV -> Parquet: we will read the parquet file and return the sample rows.
+#     For SQLite we will read the SQLite database and return the sample rows. 
+#     '''
+#     if table_name is None:
+#         raise ValueError("No table name provided.")
 
-    conn.commit()
-    return conn
+#     #Initialize duckDB connection.
+#     conn = duckdb.connect()
 
-def save_metadata(dataset: Dataset):
-    '''
-    save_metadata is a function that saves the metadata of a dataset to the metadata database.
-    Args:
-        dataset: Dataset - The dataset to save the metadata of.
-    '''
+#     if dataset.upload_type == "csv":
+#         try:
+#             return conn.execute(f"SELECT * FROM read_parquet(?) LIMIT ?", [])
 
-    data = dataset.model_dump()
-    # get the connection to the metadata database.
-    conn = connect_metadata_db()
-
-    try: 
-        conn.execute(f"INSERT INTO {METADATA_TABLE} (dataset_id, upload_type, raw_byte_size, tables, schema) VALUES (?, ?, ?, ?, ?)",
-        (data["dataset_id"], data["upload_type"], data["raw_byte_size"], json.dumps(data["tables"]), json.dumps(data["schema"])))
-        conn.commit()
-
-    finally:
-        conn.close()
-
-def list_datasets():
-    '''
-    list_datasets is a function that lists all the datasets in the metadata database.
-    Args:
-        None
-    Returns:
-        list[Dataset] - A list of all the datasets in the metadata database.
-    '''
-    conn = connect_metadata_db()
-    try:
-        cursor = conn.execute(f"SELECT * FROM {METADATA_TABLE}").fetchall()
-    finally:
-        conn.close()
-
-    # convert the cursor (query for all the metadata rows) into a list of Dataset objects and then return. 
-    return [Dataset(
-        dataset_id=row[0],
-        upload_type=row[1],
-        raw_byte_size=row[2],
-        tables=json.loads(row[3]),
-        schema=json.loads(row[4])
-    ) for row in cursor]
-
-def get_dataset_by_id(dataset_id: str) -> Dataset:
-    '''
-    get_dataset_by_id is a function that gets a dataset by its indivual id, from the metadata database.
-    Args: 
-        dataset_id: str - The id of the dataset to get.
-    returns:
-        Dataset - The dataset object with the given id.
-    '''
-    conn = connect_metadata_db()
-    try:
-        # Create a tuple of the dataset id, so that it can be used in the query. we need the , at the end to make it a tuple.
-        db_tuple = (dataset_id,)
-        cursor = conn.execute(f"SELECT * FROM {METADATA_TABLE} WHERE dataset_id = ?", db_tuple).fetchone()
-    finally:
-        conn.close()
-
-    return Dataset(
-        dataset_id=cursor[0],
-        upload_type=cursor[1],
-        raw_byte_size=cursor[2],
-        tables=json.loads(cursor[3]),
-        schema=json.loads(cursor[4])
-    )
+    
 
 # Potential next functions to add
 # - Save JSON Files
@@ -255,11 +192,6 @@ def get_dataset_by_id(dataset_id: str) -> Dataset:
 
 
 if __name__ == "__main__":
-    # print(os.getcwd())
-    # print(get_sqlite_table_names(Path("db_helpers/test_data/test_sql.db")))
-    # print(get_sqlite_schema(Path("db_helpers/test_data/test_sql.db")))
-    connect_metadata_db()
-
     print(list_datasets())
 
 

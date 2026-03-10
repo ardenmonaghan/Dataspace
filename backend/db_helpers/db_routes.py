@@ -7,13 +7,10 @@ from .db_services import (
     save_parquet_file,
     get_parquet_schema,
     get_sqlite_schema,
-    get_sqlite_table_names,
-    list_datasets,
-    get_dataset_by_id,
-    save_metadata,
+    get_sqlite_table_names
 )
-from .db_constants import DATA_ROOT
-from .db_constants import Dataset
+from .db_constants import DATA_ROOT, Dataset
+from .db_metadata import save_metadata, list_datasets, get_dataset_by_id
 
 
 router = APIRouter(prefix="/db", tags=["db"])
@@ -66,6 +63,7 @@ def upload_db(file: UploadFile = File(...)) -> dict:
             dataset_id=dataset_id,
             upload_type=upload_type,
             raw_byte_size=raw_size,
+            dataset_directory=dataset_dir,
             tables={table_key: str(parquet_path)}, # the table key will be the parquet path. 
             schema=schema,
         )
@@ -81,12 +79,14 @@ def upload_db(file: UploadFile = File(...)) -> dict:
             dataset_id=dataset_id,
             upload_type=upload_type,
             raw_byte_size=raw_size,
+            dataset_directory=dataset_dir,
             tables=tables,
             schema=schema,
         )
 
     # Save the metadata of the dataset to the database.
     try:
+        print("Saving metadata: ", new_dataset)
         save_metadata(new_dataset)
         return { "message": "File uploaded successfully"}
     except Exception as e:
