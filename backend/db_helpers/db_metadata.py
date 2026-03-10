@@ -8,7 +8,7 @@ import json
 # Metadata Database Helper Functions
 ########################################################
 
-def connect_metadata_db() -> None:
+def connect_metadata_db():
     '''
     connect_metadata_db is a function that ensures that the metadata SQLite schema matches the current Dataset model
 
@@ -19,39 +19,14 @@ def connect_metadata_db() -> None:
 
     metadata_path = Path(METADATA_DB)
     conn = sqlite3.connect(str(metadata_path))
-    cursor = conn.cursor()
 
-    cursor.execute(f""" CREATE TABLE IF NOT EXISTS {METADATA_TABLE} (dataset_id TEXT PRIMARY KEY, 
+    conn.execute(f""" CREATE TABLE IF NOT EXISTS {METADATA_TABLE} (dataset_id TEXT PRIMARY KEY, 
     upload_type TEXT, 
     raw_byte_size INTEGER, 
     dataset_directory TEXT NOT NULL,
     tables TEXT NOT NULL, 
     schema TEXT NOT NULL)""")
 
-    existing_cols = {row[1]: row for row in cursor.fetchall()}  # {name: row}
-
-    if existing_cols == {}:
-        print("No existing columns found, creating new table.")
-        conn.commit()
-        return conn
-    
-    print("Existing columns: ", existing_cols)
-
-    desired_columns = {
-        "dataset_id":    "TEXT",          # primary key already set in CREATE TABLE
-        "upload_type":   "TEXT",
-        "raw_byte_size": "INTEGER",
-        "dataset_directory": "TEXT",
-        "tables":        "TEXT",
-        "schema":        "TEXT",
-    }
-
-    for name, col_type in desired_columns.items():
-        if name not in existing_cols:
-            cursor.execute(f"ALTER TABLE {METADATA_TABLE} ADD COLUMN {name} {col_type}")
-
-    # commit the changes and close the connection.
-    logging.info("Metadata database schema connected & migrated successfully.")
     conn.commit()
     return conn
 
@@ -68,7 +43,7 @@ def save_metadata(dataset: Dataset):
     conn = connect_metadata_db()
 
     try: 
-        conn.execute(f"INSERT INTO {METADATA_TABLE} (dataset_id, upload_type, raw_byte_size, tables, schema) VALUES (?, ?, ?, ?, ?, ?)",
+        conn.execute(f"INSERT INTO {METADATA_TABLE} (dataset_id, upload_type, raw_byte_size, dataset_directory, tables, schema) VALUES (?, ?, ?, ?, ?, ?)",
         (data["dataset_id"], data["upload_type"], data["raw_byte_size"], data["dataset_directory"], json.dumps(data["tables"]), json.dumps(data["schema"])))
         conn.commit()
 

@@ -165,24 +165,38 @@ def get_sqlite_schema(sqlite_path: Path) -> dict:
     return schema
 
 
-# def get_sample_rows(dataset: Dataset, num_rows: int, table_name: str) list[dict[str, Any]]:
-#     '''
-#     get_sample_rows is a db_helper function that gets the sample rows from a dataset and returns them as a list of dictionaries.
-#     If table name is none then we will return none.
+def get_sample_rows(dataset: Dataset, num_rows: int, table_name: str) -> list[dict[str, any]]:
+    '''
+    get_sample_rows is a db_helper function that gets the sample rows from a dataset and returns them as a list of dictionaries.
+    If table name is none then we will return none.
 
-#     For CSV -> Parquet: we will read the parquet file and return the sample rows.
-#     For SQLite we will read the SQLite database and return the sample rows. 
-#     '''
-#     if table_name is None:
-#         raise ValueError("No table name provided.")
+    For CSV -> Parquet: we will read the parquet file and return the sample rows.
+    For SQLite we will read the SQLite database and return the sample rows. 
+    '''
+    if table_name is None:
+        raise ValueError("No table name provided.")
 
-#     #Initialize duckDB connection.
-#     conn = duckdb.connect()
+    #Initialize duckDB connection.
+    conn = duckdb.connect()
+    
+    # Get the path to the table. 
+    table_path = dataset.tables[table_name]
 
-#     if dataset.upload_type == "csv":
-#         try:
-#             return conn.execute(f"SELECT * FROM read_parquet(?) LIMIT ?", [])
+    try:
+        if dataset.upload_type == "csv":
+        # If csv then we load in the parquet file and return the sample rows.
+            dataframe = conn.execute("SELECT * FROM read_parquet(?) LIMIT ?", [table_path, num_rows]).fetchdf()
 
+        elif dataset.upload_type == "sqlite":
+            conn.execute("ATTACH DATABASE ? AS sqlite_db (TYPE sqlite)", [table_path])
+            dataframe = conn.execute(f"SELECT * FROM sqlite_db.{table_name} LIMIT ?", [num_rows]).fetchdf()
+
+    finally:
+        conn.close()
+
+
+    print(dataframe.to_dict(orient="records"))
+    return dataframe.to_dict(orient="records")
     
 
 # Potential next functions to add
@@ -192,7 +206,7 @@ def get_sqlite_schema(sqlite_path: Path) -> dict:
 
 
 if __name__ == "__main__":
-    print(list_datasets())
+    get_sample_rows(list_datasets()[0], 10, "test_table")
 
 
     

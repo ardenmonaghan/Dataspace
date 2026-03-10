@@ -63,7 +63,7 @@ def upload_db(file: UploadFile = File(...)) -> dict:
             dataset_id=dataset_id,
             upload_type=upload_type,
             raw_byte_size=raw_size,
-            dataset_directory=dataset_dir,
+            dataset_directory=str(dataset_dir),
             tables={table_key: str(parquet_path)}, # the table key will be the parquet path. 
             schema=schema,
         )
@@ -79,7 +79,7 @@ def upload_db(file: UploadFile = File(...)) -> dict:
             dataset_id=dataset_id,
             upload_type=upload_type,
             raw_byte_size=raw_size,
-            dataset_directory=dataset_dir,
+            dataset_directory=str(dataset_dir),
             tables=tables,
             schema=schema,
         )
@@ -88,7 +88,7 @@ def upload_db(file: UploadFile = File(...)) -> dict:
     try:
         print("Saving metadata: ", new_dataset)
         save_metadata(new_dataset)
-        return { "message": "File uploaded successfully"}
+        return {"message": "File uploaded successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error saving metadata: {e}")
 
