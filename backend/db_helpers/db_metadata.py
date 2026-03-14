@@ -26,7 +26,7 @@ def connect_metadata_db():
     conn.execute(f""" CREATE TABLE IF NOT EXISTS {METADATA_TABLE} (dataset_id TEXT PRIMARY KEY, 
     upload_type TEXT, 
     raw_byte_size INTEGER, 
-    dataset_directory TEXT NOT NULL,
+    dataset_path TEXT NOT NULL,
     tables TEXT NOT NULL, 
     schema TEXT NOT NULL)""")
 
@@ -46,8 +46,8 @@ def save_metadata(dataset: Dataset):
     conn = connect_metadata_db()
 
     try: 
-        conn.execute(f"INSERT INTO {METADATA_TABLE} (dataset_id, upload_type, raw_byte_size, dataset_directory, tables, schema) VALUES (?, ?, ?, ?, ?, ?)",
-        (data["dataset_id"], data["upload_type"], data["raw_byte_size"], data["dataset_directory"], json.dumps(data["tables"]), json.dumps(data["schema"])))
+        conn.execute(f"INSERT INTO {METADATA_TABLE} (dataset_id, upload_type, raw_byte_size, dataset_path, tables, schema) VALUES (?, ?, ?, ?, ?, ?)",
+        (data["dataset_id"], data["upload_type"], data["raw_byte_size"], data["dataset_path"], json.dumps(data["tables"]), json.dumps(data["schema"])))
         conn.commit()
 
     finally:
@@ -72,7 +72,7 @@ def list_datasets():
         dataset_id=row[0],
         upload_type=row[1],
         raw_byte_size=row[2],
-        dataset_directory=row[3],
+        dataset_path=row[3],
         tables=json.loads(row[4]),
         schema=json.loads(row[5])
     ) for row in cursor]
@@ -105,7 +105,7 @@ def get_dataset_by_id(dataset_id: str) -> Dataset:
         dataset_id=cursor[0],
         upload_type=cursor[1],
         raw_byte_size=cursor[2],
-        dataset_directory=cursor[3],
+        dataset_path=cursor[3],
         tables=json.loads(cursor[4]),
         schema=json.loads(cursor[5])
     )

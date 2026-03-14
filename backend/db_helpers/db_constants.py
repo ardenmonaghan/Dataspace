@@ -29,8 +29,8 @@ class Dataset(BaseModel):
     dataset_id: str
     upload_type: UploadType
     raw_byte_size: int
-    dataset_directory: str # The directory of the dataset.
-    tables: dict[str, str]  # table name -> path to that table's data
+    dataset_path: str # The dataset path.
+    tables: list[str] # all the table names in the dataset.
     schema: dict[str, dict[str, str]] #schema is a dictionary of the table name and the column names and their types.
 
 if __name__ == "__main__":

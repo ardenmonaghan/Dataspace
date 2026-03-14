@@ -63,8 +63,8 @@ def upload_db(file: UploadFile = File(...)) -> dict:
             dataset_id=dataset_id,
             upload_type=upload_type,
             raw_byte_size=raw_size,
-            dataset_directory=str(dataset_dir),
-            tables={table_key: str(parquet_path)}, # the table key will be the parquet path. 
+            dataset_path=str(dataset_dir),
+            tables=[table_key], # the table key will be the parquet path. 
             schema=schema,
         )
 
@@ -79,8 +79,8 @@ def upload_db(file: UploadFile = File(...)) -> dict:
             dataset_id=dataset_id,
             upload_type=upload_type,
             raw_byte_size=raw_size,
-            dataset_directory=str(dataset_dir),
-            tables=tables,
+            dataset_path=str(dataset_dir),
+            tables=table_names,
             schema=schema,
         )
 

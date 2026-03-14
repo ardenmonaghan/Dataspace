@@ -8,9 +8,7 @@ from .db_constants import Dataset
 from db_helpers.db_constants import DATA_ROOT, METADATA_DB, METADATA_TABLE
 from fastapi import UploadFile
 
-########################################################
-# Database Services Helper Functions
-########################################################
+##
 '''
 db_services.py is a module that contains the functions to interact with the database services.
 This is different from the db_metadata which contains the functions to interact with the metadata database.
@@ -181,17 +179,16 @@ def get_sample_rows(dataset: Dataset, num_rows: int, table_name: str) -> list[di
 
     #Initialize duckDB connection.
     conn = duckdb.connect()
+    dataset_path = dataset.dataset_path
     
-    # Get the path to the table. 
-    table_path = dataset.tables[table_name]
-
     try:
         if dataset.upload_type == "csv":
-        # If csv then we load in the parquet file and return the sample rows.
-            dataframe = conn.execute("SELECT * FROM read_parquet(?) LIMIT ?", [table_path, num_rows]).fetchdf()
+            # If csv then we load in the parquet file and return the sample rows. There is only one table in the dataset.
+            dataframe = conn.execute("SELECT * FROM read_parquet(?) LIMIT ?", [dataset_path, num_rows]).fetchdf()
 
         elif dataset.upload_type == "sqlite":
-            conn.execute("ATTACH DATABASE ? AS sqlite_db (TYPE sqlite)", [table_path])
+            # if sqlite then we moust attach the sqlite file into DuckDB and expose it with the name sqlite_db.
+            conn.execute("ATTACH DATABASE ? AS sqlite_db (TYPE sqlite)", [dataset_path])
             dataframe = conn.execute(f"SELECT * FROM sqlite_db.{table_name} LIMIT ?", [num_rows]).fetchdf()
 
     finally:

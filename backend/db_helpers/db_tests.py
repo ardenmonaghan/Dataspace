@@ -5,7 +5,7 @@ from db_helpers.db_metadata import list_datasets, get_dataset_by_id
 # Test getting sample rows from the dataset via csv file. 
 def test_get_sample_rows_csv():
     # Example dataset id
-    dataset_id = "17adf15f-c696-454b-8186-9a8d61b74038"
+    dataset_id = "d2808899-d2ab-405c-82e0-3e34c5517913"
     # Retrieve the dataset from the database.
     dataset = get_dataset_by_id(dataset_id)
 
