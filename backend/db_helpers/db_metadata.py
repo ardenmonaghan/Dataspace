@@ -7,6 +7,9 @@ import json
 ########################################################
 # Metadata Database Helper Functions
 ########################################################
+'''
+db_metadata.py is a module that contains the functions to interact with the metadata database.
+'''
 
 def connect_metadata_db():
     '''

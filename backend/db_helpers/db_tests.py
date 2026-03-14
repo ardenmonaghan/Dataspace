@@ -1,23 +1,33 @@
 # rm -rf backend/datasets/*
 from db_helpers.db_services import get_sample_rows
-from db_helpers.db_metadata import list_datasets
+from db_helpers.db_metadata import list_datasets, get_dataset_by_id
 
-# Test getting sample rows from the dataset
-def test_get_sample_rows():
+# Test getting sample rows from the dataset via csv file. 
+def test_get_sample_rows_csv():
     # Example dataset id
     dataset_id = "17adf15f-c696-454b-8186-9a8d61b74038"
     # Retrieve the dataset from the database.
     dataset = get_dataset_by_id(dataset_id)
 
-    # Get the sample rows from the dataset.
-    sample_rows = get_sample_rows(dataset, 10, "test_table")
+    print(dataset)
+
+    # Get 10 individual sampled rows from the dataset. 
+    sample_rows = get_sample_rows(dataset, 1, "creditcard")
     print(sample_rows)
 
-# Test getting sample rows from the dataset
+def test_get_sample_rows_sqlite():
+    pass
 
 # Test uploading a dataset to the DB and the metadata being saved correctly. 
+def test_upload_dataset():
+    pass
 
 # Test get all table names from the dataset
+def test_get_all_table_names():
+    pass
+
 
 if __name__ == "__main__":
-    test_get_sample_rows()
+    test_get_sample_rows_csv()
+
+# python3 -m db_helpers.db_tests

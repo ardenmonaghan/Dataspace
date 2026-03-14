@@ -1,17 +1,20 @@
 import os
-import sys
 import sqlite3
 import duckdb
 import uuid
 from pathlib import Path
 import logging
-import json
 from .db_constants import Dataset
-from sqlalchemy import (
-    create_engine, Column, String, DateTime, Integer, Text
-)
 from db_helpers.db_constants import DATA_ROOT, METADATA_DB, METADATA_TABLE
 from fastapi import UploadFile
+
+########################################################
+# Database Services Helper Functions
+########################################################
+'''
+db_services.py is a module that contains the functions to interact with the database services.
+This is different from the db_metadata which contains the functions to interact with the metadata database.
+'''
 
 def detect_upload_type(filename: str):
     '''
@@ -194,8 +197,6 @@ def get_sample_rows(dataset: Dataset, num_rows: int, table_name: str) -> list[di
     finally:
         conn.close()
 
-
-    print(dataframe.to_dict(orient="records"))
     return dataframe.to_dict(orient="records")
     
 
@@ -206,7 +207,7 @@ def get_sample_rows(dataset: Dataset, num_rows: int, table_name: str) -> list[di
 
 
 if __name__ == "__main__":
-    get_sample_rows(list_datasets()[0], 10, "test_table")
+    pass
 
 
     
