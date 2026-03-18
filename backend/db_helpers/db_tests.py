@@ -11,7 +11,7 @@ def remove_test_setup():
 # Test getting sample rows from the dataset via csv file. 
 def test_get_sample_rows_csv():
     # Example dataset id
-    dataset_id = "afeb4a59-0e06-4660-9075-12d1063bc5c7"
+    dataset_id = "d2808899-d2ab-405c-82e0-3e34c5517913"
     # Retrieve the dataset from the database.
     dataset = get_dataset_by_id(dataset_id)
     # Get 10 individual sampled rows from the dataset. 
@@ -38,7 +38,7 @@ def test_get_all_table_names():
 
 
 if __name__ == "__main__":
-    # test_get_sample_rows_csv()
-    test_get_sample_rows_sqlite()
+    test_get_sample_rows_csv()
+    # test_get_sample_rows_sqlite()
 
 # python3 -m db_helpers.db_tests
